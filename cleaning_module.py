@@ -28,3 +28,47 @@ def cleaning_profile(df):
                 break
 
     return profile_data
+
+def cleaning_general(df):
+    start_index = df[df.apply(lambda x: x.astype(str).str.contains('GENERAL').any(), axis=1)].index[0]
+    end_index = df[df.apply(lambda x: x.astype(str).str.contains('24 HOURS SUMMARY').any(), axis=1)].index[0]
+    df_cleaned = df.iloc[start_index + 1:end_index - 1, 4].reset_index(drop=True)
+
+    patterns = [
+        'rig_type_name',
+        'rig_power',
+        'kb_elevation',
+        'midnight_depth',
+        'progress',
+        'proposed_td',
+        'spud_date',
+        'release_date',
+        'planned_days',
+        'days_from_rig_release'
+    ]
+
+    result_dict = {patterns[i]: df_cleaned[i] for i in range(len(patterns))}
+
+    return result_dict
+
+def cleaning_drilling_parameter(df):
+    start_index = df[df.apply(lambda x: x.astype(str).str.contains('DRILLING PARAMETERS').any(), axis=1)].index[0]
+    end_index = df[df.apply(lambda x: x.astype(str).str.contains('24 HOURS SUMMARY').any(), axis=1)].index[0]
+    df_cleaned = df.iloc[start_index + 1:end_index - 1, 11].reset_index(drop=True)
+
+    patterns = [
+        'average_wob_24_hrs',
+        'average_rop_24_hrs',
+        'average_surface_rpm_dhm',
+        'on_off_bottom_torque',
+        'flowrate_spp',
+        'air_rate',
+        'corr_inhib_foam_rate',
+        'puw_sow_rotw',
+        'total_drilling_time',
+        'ton_miles'
+    ]
+
+    result_dict = {patterns[i]: df_cleaned[i] for i in range(len(patterns))}
+
+    return result_dict
