@@ -150,7 +150,7 @@ def cleaning_data_geo_dipa_energi(df):
           'end': df_cleaned[1].tolist(),
           'elapsed': df_cleaned[2].tolist(),
           'depth': df_cleaned[3].tolist(),
-          'pt/npt': df_cleaned[5].tolist(),
+          'pt_npt': df_cleaned[5].tolist(),
           'code': df_cleaned[6].tolist(),
           'description': df_cleaned[7].tolist(),
           'operation': df_cleaned[8].tolist()
