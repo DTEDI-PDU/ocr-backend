@@ -1,4 +1,5 @@
 import os
+import hashlib
 import camelot
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
@@ -9,8 +10,8 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)   
-app.config['UPLOAD_FOLDER'] = r'C:\Users\zidan\OneDrive\Documents\UNIVERSITAS GADJAH MADA\PDU\uploads'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:user@localhost/OCR'
+app.config['UPLOAD_FOLDER'] = r'/Users/macbook/Documents/OCR - PDU/upload'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7832@localhost:5433/OCR'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 
@@ -20,6 +21,10 @@ def init_db(app):
     db.init_app(app)
     with app.app_context():
         db.create_all()
+
+def calculate_hash(data_dict):
+    data_string = ''.join(str(value) for value in data_dict.values())
+    return hashlib.md5(data_string.encode()).hexdigest()
 
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
@@ -44,8 +49,14 @@ def upload_pdf():
 
             profile, general, drilling_parameter, afe, personnel_in_charge, summary, time_breakdown = cleaning_data_geo_dipa_energi(tables[0].df)
 
+            unique_hash = calculate_hash(profile)
+            existing_profile = Profile.query.filter_by(unique_hash=unique_hash).first()
+            if existing_profile:
+                return jsonify({'message': 'Data already exists in the database. Upload canceled.'}), 409
+
+
             # Save the extracted data into the database
-            profile_data = Profile(**profile)
+            profile_data = Profile(**profile, unique_hash=unique_hash)
             general_data = GeneralData(**general)
             drilling_data = DrillingParameter(**drilling_parameter)
             afe_data = AFE(**afe)

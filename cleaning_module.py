@@ -25,6 +25,10 @@ def cleaning_data_geo_dipa_energi(df):
               if match:
                   profile_data[key] = match.group(1).strip()
                   break
+      if 'gl_msl_m' in profile_data:
+        profile_data['gl_msl_m'] = re.sub(r'[^\d.]', '', profile_data['gl_msl_m'])
+        profile_data['gl_msl_m'] = float(profile_data['gl_msl_m']) if profile_data['gl_msl_m'] else None
+
 
       return profile_data
 

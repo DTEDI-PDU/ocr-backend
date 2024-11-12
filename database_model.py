@@ -19,6 +19,7 @@ class Profile(db.Model):
     latitude_longitude = db.Column(db.String(100))
     environment = db.Column(db.String(50))
     gl_msl_m = db.Column(db.Float)
+    unique_hash = db.Column(db.String(32), unique=True, nullable=False)
 
 # GeneralData Model
 class GeneralData(db.Model):
