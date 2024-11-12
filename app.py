@@ -57,14 +57,16 @@ def upload_pdf():
 
             # Save the extracted data into the database
             profile_data = Profile(**profile, unique_hash=unique_hash)
-            general_data = GeneralData(**general)
-            drilling_data = DrillingParameter(**drilling_parameter)
-            afe_data = AFE(**afe)
-            personnel_data = PersonnelInCharge(**personnel_in_charge)
-            summary_data = Summary(**summary)
-            time_breakdown_data = TimeBreakdown(**time_breakdown)
-        
             db.session.add(profile_data)
+            db.session.commit()
+
+            general_data = GeneralData(**general, profile_id=profile_data.id)
+            drilling_data = DrillingParameter(**drilling_parameter, profile_id=profile_data.id)
+            afe_data = AFE(**afe, profile_id=profile_data.id)
+            personnel_data = PersonnelInCharge(**personnel_in_charge, profile_id=profile_data.id)
+            summary_data = Summary(**summary, profile_id=profile_data.id)
+            time_breakdown_data = TimeBreakdown(**time_breakdown, profile_id=profile_data.id)
+        
             db.session.add(general_data)
             db.session.add(drilling_data)
             db.session.add(afe_data)
@@ -93,5 +95,5 @@ def upload_pdf():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Create all tables
+        db.create_all()
     app.run(debug=True)
