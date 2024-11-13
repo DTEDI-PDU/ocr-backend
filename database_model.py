@@ -98,14 +98,14 @@ class TimeBreakdown(db.Model):
     __tablename__ = 'time_breakdown'
     
     profile_id = db.Column(db.Integer, db.ForeignKey('profile.id'), primary_key=True)
-    start = db.Column(db.ARRAY(db.String(256)), nullable=True)
-    end = db.Column(db.ARRAY(db.String(256)), nullable=True)
-    elapsed = db.Column(db.ARRAY(db.String(256)), nullable=True)
-    depth = db.Column(db.ARRAY(db.String(256)), nullable=True)
-    pt_npt = db.Column(db.ARRAY(db.String(256)), nullable=True)
-    code = db.Column(db.ARRAY(db.String(256)), nullable=True)
-    description = db.Column(db.ARRAY(db.String(256)), nullable=True)
-    operation = db.Column(db.ARRAY(db.Text), nullable=True)
+    start = db.Column(db.String(256), nullable=True, primary_key=True)
+    end = db.Column(db.String(256), nullable=True)
+    elapsed = db.Column(db.Float, nullable=True)
+    depth = db.Column(db.Float, nullable=True)
+    pt_npt = db.Column(db.String(256), nullable=True)
+    code = db.Column(db.String(256), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    operation = db.Column(db.Text, nullable=True)
 
     def to_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

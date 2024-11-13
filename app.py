@@ -48,7 +48,9 @@ def upload_pdf():
                 return jsonify({'message': 'No tables found in the PDF file'}), 400
 
             profile, general, drilling_parameter, afe, personnel_in_charge, summary, time_breakdown = cleaning_data_geo_dipa_energi(tables[0].df)
-
+            
+            time_breakdown = {i: entry for i, entry in enumerate(time_breakdown)}
+            
             unique_hash = calculate_hash(profile)
             existing_profile = Profile.query.filter_by(unique_hash=unique_hash).first()
             if existing_profile:
@@ -65,14 +67,29 @@ def upload_pdf():
             afe_data = AFE(**afe, profile_id=profile_data.id)
             personnel_data = PersonnelInCharge(**personnel_in_charge, profile_id=profile_data.id)
             summary_data = Summary(**summary, profile_id=profile_data.id)
-            time_breakdown_data = TimeBreakdown(**time_breakdown, profile_id=profile_data.id)
+
+            for item in time_breakdown.values():
+                time_breakdown_data = TimeBreakdown(
+                    start=item['start'],
+                    end=item['end'],
+                    elapsed=item['elapsed'],
+                    depth=item['depth'],
+                    pt_npt=item['pt_npt'],
+                    code=item['code'],
+                    description=item['description'],
+                    operation=item['operation'],
+                    profile_id=profile_data.id  # Link to the profile_id
+                )
+                db.session.add(time_breakdown_data)
+
+            #time_breakdown_data = TimeBreakdown(**time_breakdown, profile_id=profile_data.id)
         
             db.session.add(general_data)
             db.session.add(drilling_data)
             db.session.add(afe_data)
             db.session.add(personnel_data)
             db.session.add(summary_data)
-            db.session.add(time_breakdown_data)
+            #db.session.add_all(time_breakdown_data)
             db.session.commit()
 
             return jsonify({
@@ -83,7 +100,7 @@ def upload_pdf():
                 'afe': afe_data.to_dict(),          
                 'personnel_data' : personnel_data.to_dict(),
                 'summary_data': summary_data.to_dict(),
-                'time_breakdown' : time_breakdown_data.to_dict(),
+                'time_breakdown' : time_breakdown,
             }), 201
 
 
