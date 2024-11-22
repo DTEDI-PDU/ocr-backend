@@ -11,8 +11,8 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)   
-app.config['UPLOAD_FOLDER'] = r'/Users/macbook/Documents/OCR - PDU/upload'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:7832@localhost:5433/OCR'
+app.config['UPLOAD_FOLDER'] = r'C:\Users\zidan\OneDrive\Documents\UNIVERSITAS GADJAH MADA\PDU\uploads'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:user@localhost/OCR'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 
@@ -27,14 +27,10 @@ def calculate_hash(data_dict):
     data_string = ''.join(str(value) for value in data_dict.values())
     return hashlib.md5(data_string.encode()).hexdigest()
 
-<<<<<<< HEAD
 def object_to_dict(obj):
     return {column.key: getattr(obj, column.key) for column in inspect(obj).mapper.column_attrs}
 
 @app.route('/', methods=['POST'])
-=======
-@app.route('/upload_pdf', methods=['POST'])
->>>>>>> 360e0eba22b1d4758b0e1f71284755127871c245
 def upload_pdf():
     if 'file' not in request.files:
         return jsonify({'message': 'No file part in the request'}), 400
