@@ -1,4 +1,5 @@
 import re
+import pandas as pd
 
 def cleaning_data_geo_dipa_energi(df):
 
@@ -25,6 +26,10 @@ def cleaning_data_geo_dipa_energi(df):
               if match:
                   profile_data[key] = match.group(1).strip()
                   break
+      if 'gl_msl_m' in profile_data:
+        profile_data['gl_msl_m'] = re.sub(r'[^\d.]', '', profile_data['gl_msl_m'])
+        profile_data['gl_msl_m'] = float(profile_data['gl_msl_m']) if profile_data['gl_msl_m'] else None
+
 
       return profile_data
 
@@ -145,18 +150,20 @@ def cleaning_data_geo_dipa_energi(df):
       df_cleaned = df.iloc[start_index + 1:end_index].reset_index(drop=True)
       df_cleaned = df_cleaned.iloc[:, :9]
 
-      result_dict = {
-          'start': df_cleaned[0].tolist(),
-          'end': df_cleaned[1].tolist(),
-          'elapsed': df_cleaned[2].tolist(),
-          'depth': df_cleaned[3].tolist(),
-          'pt_npt': df_cleaned[5].tolist(),
-          'code': df_cleaned[6].tolist(),
-          'description': df_cleaned[7].tolist(),
-          'operation': df_cleaned[8].tolist()
-      }
+      result_list = []
+      for i in range(len(df_cleaned)):
+          result_list.append({
+              'start': df_cleaned.iloc[i, 0],
+              'end': df_cleaned.iloc[i, 1],
+              'elapsed': df_cleaned.iloc[i, 2],
+              'depth': df_cleaned.iloc[i, 3],
+              'pt_npt': df_cleaned.iloc[i, 5],
+              'code': df_cleaned.iloc[i, 6],
+              'description': df_cleaned.iloc[i, 7],
+              'operation': df_cleaned.iloc[i, 8]  
+          })
 
-      return result_dict
+      return result_list
 
   profile = cleaning_profile(df)
   general = cleaning_general(df)
