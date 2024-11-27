@@ -12,7 +12,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)   
 app.config['UPLOAD_FOLDER'] = r'C:\Users\zidan\OneDrive\Documents\UNIVERSITAS GADJAH MADA\PDU\uploads'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:user@localhost/OCR'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@flask_db:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 
