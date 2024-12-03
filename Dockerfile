@@ -6,10 +6,10 @@ COPY requirements.txt ./
 
 RUN pip install --upgrade pip
 
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 COPY . .
 
 EXPOSE 4000
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+CMD [ "flask", "run", "--host=0.0.0.0", "--port=4000"]
