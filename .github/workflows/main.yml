@@ -32,4 +32,4 @@ jobs:
           port: 22
           script: |
             docker pull raview69/ocr-test:latest
-            docker run -d -p 5000:5000 raview69/ocr-test
+            docker run -d -p 4000:4000 raview69/ocr-test:latest
