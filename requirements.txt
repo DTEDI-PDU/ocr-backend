@@ -2,8 +2,9 @@ camelot_py==0.11.0
 Flask==3.0.3
 Flask_Cors==5.0.0
 flask_sqlalchemy==3.1.1
-pandas==1.5.0
 SQLAlchemy==2.0.35
 Werkzeug==3.0.6
 opencv-python
 psycopg2-binary
+numpy==1.26.4
+ghostscript

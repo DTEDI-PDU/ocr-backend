@@ -1,5 +1,4 @@
 import re
-import pandas
 
 
 def cleaning_data_geo_dipa_energi(df):
