@@ -15,7 +15,7 @@ app.config['UPLOAD_FOLDER'] = r'C:\Users\zidan\OneDrive\Documents\UNIVERSITAS GA
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:user@localhost/OCR'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
-
+        
 db.init_app(app)
 
 def init_db(app):
@@ -30,7 +30,7 @@ def calculate_hash(data_dict):
 def object_to_dict(obj):
     return {column.key: getattr(obj, column.key) for column in inspect(obj).mapper.column_attrs}
 
-@app.route('/', methods=['POST'])
+@app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
     if 'file' not in request.files:
         return jsonify({'message': 'No file part in the request'}), 400
@@ -141,7 +141,7 @@ def fetch_all_tables():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route('/fetch/<int:report_id>', methods=['GET'])
+@app.route('/get_id/<int:report_id>', methods=['GET'])
 def fetch_report_by_id(report_id):
     try:
         # Fetch data from all tables for the given report ID
@@ -167,7 +167,42 @@ def fetch_report_by_id(report_id):
         return jsonify(report_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
+@app.route('/get_ReportNo/<report_no>', methods=['GET'])
+def fetch_by_report_no(report_no):
+    try:
+        # Get the profile based on report_no
+        profile = Profile.query.filter_by(report_no=report_no).first()
+        if not profile:
+            return jsonify({"message": f"Data with report_no '{report_no}' not found"}), 404
+
+        # Convert profile data to dictionary
+        profile_data = object_to_dict(profile)
+
+        # Fetch related data using relationships
+        general_data = [object_to_dict(general) for general in profile.general_data]
+        drilling_parameter_data = [object_to_dict(drilling_param) for drilling_param in profile.drilling_parameters]
+        afe_data = [object_to_dict(afe) for afe in profile.afe]
+        personnel_data = [object_to_dict(personnel) for personnel in profile.personnel_in_charge]
+        summary_data = [object_to_dict(summary) for summary in profile.summary]
+        time_breakdown_data = [object_to_dict(time_breakdown) for time_breakdown in profile.time_breakdown]
+
+        # Convert to dictionary format for JSON response
+           # Combine all data
+        report_data = {
+            "profile": profile_data,
+            "general_data": general_data,
+            "drilling_parameters": drilling_parameter_data,
+            "afe": afe_data,
+            "personnel_in_charge": personnel_data,
+            "summary": summary_data,
+            "time_breakdown": time_breakdown_data,
+        }
+        return jsonify(report_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

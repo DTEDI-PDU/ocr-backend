@@ -12,7 +12,7 @@ class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     operator = db.Column(db.String(100))
     contractor = db.Column(db.String(100))
-    report_no = db.Column(db.String(50))
+    report_no = db.Column(db.String(50), nullable=False, unique=True)
     well_pad_name = db.Column(db.String(100))
     field = db.Column(db.String(50))
     well_type_profile = db.Column(db.String(100))
@@ -20,6 +20,14 @@ class Profile(db.Model):
     environment = db.Column(db.String(50))
     gl_msl_m = db.Column(db.Float)
     unique_hash = db.Column(db.String(32), unique=True, nullable=False)
+
+    # Relasi dengan tabel lain
+    general_data = db.relationship('GeneralData', backref='profile', lazy=True)
+    drilling_parameters = db.relationship('DrillingParameter', backref='profile', lazy=True)
+    afe = db.relationship('AFE', backref='profile', lazy=True)
+    personnel_in_charge = db.relationship('PersonnelInCharge', backref='profile', lazy=True)
+    summary = db.relationship('Summary', backref='profile', lazy=True)
+    time_breakdown = db.relationship('TimeBreakdown', backref='profile', lazy=True)
 
 # GeneralData Model
 class GeneralData(db.Model):
